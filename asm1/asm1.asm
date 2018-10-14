@@ -1,25 +1,21 @@
 .386
 .model flat,stdcall
 option casemap:none
-;>=VS2015需要
-includelib legacy_stdio_definitions.lib
-includelib ucrt.lib
 include asm2.inc
 
-printf proto C szFormat:DWORD,:VARARG
-scanf proto C szFormat:DWORD,:VARARG
-
 .data
-szHello db "Hello!",0
 szPrompt db "输出项数：",0
 szFmt db " %d",0
-szRf db 0ah,"返回值：%d",0
+szRf db "返回值：%d",0ah,0
+szOfw db "溢出了。",0ah,0
 varfs dd 1
+
+.data?
 varft dd ?
 
 .code
 main:
-	invoke Hello,addr szHello
+	invoke PrintNowTime
 	invoke printf,addr szPrompt
 	invoke scanf,addr szFmt,addr varft
 	call Fib
@@ -34,13 +30,14 @@ Fib:
 		dec esi
 		mov ebx,varft
 		add ebx,varfs
-		push ebx
-		push offset szFmt
-		call printf
-		pop eax
 		mov eax,varft
 		mov varfs,eax
-		pop varft
+		mov varft,ebx
+		.if overflow?
+			invoke printf,addr szOfw
+			ret
+		.endif
+		invoke printf,addr szFmt,varft
 		cmp esi,0
 		jg FibLoop
 	ret
