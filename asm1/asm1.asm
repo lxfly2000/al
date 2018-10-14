@@ -4,11 +4,13 @@ option casemap:none
 ;>=VS2015需要
 includelib legacy_stdio_definitions.lib
 includelib ucrt.lib
+include asm2.inc
 
-printf proto C szFormat:DWORD ;...
-scanf proto C szFormat:DWORD ;...
+printf proto C szFormat:DWORD,:VARARG
+scanf proto C szFormat:DWORD,:VARARG
 
 .data
+szHello db "Hello!",0
 szPrompt db "输出项数：",0
 szFmt db " %d",0
 szRf db 0ah,"返回值：%d",0
@@ -17,18 +19,11 @@ varft dd ?
 
 .code
 main:
+	invoke Hello,addr szHello
 	invoke printf,addr szPrompt
-	push offset varft
-	push offset szFmt
-	call scanf
-	pop eax
-	pop eax
+	invoke scanf,addr szFmt,addr varft
 	call Fib
-	push varft
-	push offset szRf
-	call printf
-	pop eax
-	pop eax
+	invoke printf,addr szRf,varft
 	ret
 
 Fib:

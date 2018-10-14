@@ -18,5 +18,13 @@
     <MASM Include="asm1.asm">
       <Filter>源文件</Filter>
     </MASM>
+    <MASM Include="asm2.asm">
+      <Filter>源文件</Filter>
+    </MASM>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="asm2.inc">
+      <Filter>头文件</Filter>
+    </None>
   </ItemGroup>
 </Project>
